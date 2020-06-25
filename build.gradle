@@ -1,40 +1,38 @@
 ///// ################ SONARCLOUD PLUGIN #############################
 ///////// MANUAL SONAR ////// triggered with ./gradlew sonar
-// plugins {
-//     id 'java-library'
-//     id 'maven-publish'
-//     id "org.sonarqube" version "3.0"
-// }
-// apply plugin: "org.sonarqube"
-
-///////// update below keys and project name based on OCI
-// sonarqube {
-//   properties {
-//     property "sonar.projectKey", "oci-labs_check-ins"
-//     property "sonar.organization", "oci-labs"
-//     property "sonar.host.url", "https://sonarcloud.io"
-//     property "sonar.login", "76d54e72c4fbab6a5d7928cc95e2e9248986b1c5"
-//   }
-// }
-
-
-/////// AUTOMATIC SONAR ///////// commit or pull requests trigger analysis
 plugins {
     id 'java-library'
     id 'maven-publish'
     id "jacoco"
     id "java"
+    id "application"
     id "org.sonarqube" version "3.0"
 
 }
 
 apply plugin: "org.sonarqube"
 
-sonarqube {
-    properties {
-        property "sonar.sourceEncoding", "UTF-8"
-    }
-}
+///////// update below keys and project name based on OCI
+ sonarqube {
+   properties {
+     property "sonar.sourceEncoding", "UTF-8"
+     property "sonar.sources", "web-ui/src"
+     property "sonar.projectKey", "oci-labs_check-ins"
+     property "sonar.organization", "oci-labs"
+     property "sonar.host.url", "https://sonarcloud.io"
+     property "sonar.login", "b519068046bdfc31bc0cc924fd091d637bb7d7ac"
+   }
+ }
+
+
+/////// AUTOMATIC SONAR ///////// commit or pull requests trigger analysis
+
+
+//sonarqube {
+//    properties {
+//        property "sonar.sourceEncoding", "UTF-8"
+//    }
+//}
 
 ////// ################### SONARCLOUD PLUGIN END#########################
 
