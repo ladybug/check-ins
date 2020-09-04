@@ -13,10 +13,7 @@ import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -33,9 +30,15 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
     @Override
     public UserDetails createUserDetails(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims) {
         Map<String, Object> claims = buildAttributes(providerName, tokenResponse, openIdClaims);
-        List<String> roles = getRoles(openIdClaims);
+        RelevantClaims rc = getRoles(openIdClaims);
+        if (rc.getPdlId() != null) {
+            claims.put("pdl", rc.getPdlId().toString());
+        }
+        if (rc.getTeamMembers() != null && rc.getTeamMembers().size() > 0) {
+            claims.put("teamMembers", rc.getTeamMembers().stream().map(memberId -> memberId.toString()).collect(Collectors.toList()));
+        }
         String username = openIdClaims.getSubject();
-        return new UserDetails(username, roles, claims);
+        return new UserDetails(username, rc.getRoles(), claims);
     }
 
     @NonNull
@@ -62,15 +65,60 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
      * @param openIdClaims The OpenID claims
      * @return The roles to set in the {@link UserDetails}
      */
-    protected List<String> getRoles(OpenIdClaims openIdClaims) {
-        List<String> roles = new ArrayList<>();
+    protected RelevantClaims getRoles(OpenIdClaims openIdClaims) {
+        RelevantClaims rc = new RelevantClaims();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
-                .ifPresent((memberProfile) ->
-                        roles.addAll(roleRepository.findByMemberid(memberProfile.getUuid())
+                .ifPresent((memberProfile) -> {
+                    rc.getRoles().addAll(roleRepository.findByMemberid(memberProfile.getUuid())
+                            .stream()
+                            .map(role -> role.getRole().toString())
+                            .collect(Collectors.toList()));
+                    rc.setPdlId(memberProfile.getPdlId());
+                    if (rc.getPdlId() != null) {
+                        memberProfileRepository.findByPdlId(memberProfile.getUuid())
                                 .stream()
-                                .map(role -> role.getRole().toString())
-                                .collect(Collectors.toList())));
+                                .map((teamMemberProfile) -> teamMemberProfile.getUuid())
+                                .collect(Collectors.toList());
+                    }
+                });
 
-        return roles;
+        return rc;
+    }
+
+
+    private class RelevantClaims {
+        private List<String> roles;
+        private UUID pdlId;
+        private List<UUID> teamMembers;
+
+        public List<String> getRoles() {
+            if (roles == null) {
+                roles = new ArrayList<>();
+            }
+            return roles;
+        }
+
+        public void setRoles(List<String> roles) {
+            this.roles = roles;
+        }
+
+        public UUID getPdlId() {
+            return pdlId;
+        }
+
+        public void setPdlId(UUID pdlId) {
+            this.pdlId = pdlId;
+        }
+
+        public List<UUID> getTeamMembers() {
+            if (teamMembers == null) {
+                teamMembers = new ArrayList<UUID>();
+            }
+            return teamMembers;
+        }
+
+        public void setTeamMembers(List<UUID> teamMembers) {
+            this.teamMembers = teamMembers;
+        }
     }
 }

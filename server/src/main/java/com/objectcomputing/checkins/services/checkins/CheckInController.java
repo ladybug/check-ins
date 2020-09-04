@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import java.net.URI;
+import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +27,7 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -65,16 +68,23 @@ public class CheckInController {
      * @return
      */
     @Get("/{?teamMemberId,pdlId,completed}")
-    public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed) {
+    @Secured({"ADMIN"})
+    public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed, Authentication principal) {
 
+        for (String key : principal.getAttributes().keySet()) {
+            System.out.println(key + ": " + principal.getAttributes().get(key));
+        }
         MemberProfile currentUser = currentUserServices.currentUserDetails();
-        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+        //Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
         Set<CheckIn> checkInResult = checkInservices.findByFields(teamMemberId, pdlId,completed);
 
-        if(isAdmin ||
-                checkInResult.stream().allMatch(checkIn -> checkIn.getTeamMemberId().equals(currentUser.getUuid())) ||
-                checkInResult.stream().anyMatch(checkIn -> checkIn.getPdlId().equals(currentUser.getUuid()))) {
+        //if(isAdmin ||
+                //checkInResult.stream().allMatch(checkIn -> checkIn.getTeamMemberId().equals(currentUser.getUuid())) ||
+                //checkInResult.stream().anyMatch(checkIn -> checkIn.getPdlId().equals(currentUser.getUuid()))) {
+        if (
+                (principal.getAttributes().get("pdl") != null && principal.getAttributes().get("pdl").equals(pdlId.toString())) ||
+                        (principal.getAttributes().get("teamMembers") != null && ((List)principal.getAttributes().get("teamMembers")).stream().anyMatch(thisMember -> thisMember.equals(teamMemberId.toString()))))   {
             return checkInResult;
         }
 
