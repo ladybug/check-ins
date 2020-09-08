@@ -123,16 +123,32 @@ public class AgendaItemController {
 
 
 
-    /**
-     * Delete agenda item
-     *
-     * @param id, id of {@link AgendaItem} to delete
-     */
-    @Delete("/{id}")
-    public HttpResponse<?> deleteAgendaItem(UUID id) {
-        agendaItemServices.delete(id);
-        return HttpResponse
-                .ok();
+    // /**
+    //  * Delete agenda item
+    //  *
+    //  * @param id, id of {@link AgendaItem} to delete
+    //  */
+    // @Delete("/{id}")
+    // public HttpResponse<?> deleteAgendaItem(UUID id) {
+    //     agendaItemServices.delete(id);
+    //     return HttpResponse
+    //             .ok();
+    // }
+
+    /**	
+     * 	
+     * @param id	
+     * @return	
+     */	
+    @Delete("/{id}")	
+    public AgendaItem deleteAgendaItem(@NotNull UUID id){	
+        MemberProfile currentUser = currentUserServices.currentUserDetails();	
+        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);	
+        AgendaItem agendaItem = agendaItemServices.read(id);	
+        if(currentUser.getUuid().equals(agendaItem.getCreatedbyid()) || currentUser.getUuid().equals(agendaItem.getCheckinid()) || isAdmin) {	
+            return agendaItem;	
+        }	
+        return null;	
     }
 
     // /**
@@ -163,18 +179,18 @@ public class AgendaItemController {
         return null;	
     }
 
-    /**
-     * Find agenda items that match all filled in parameters, return all results when given no params
-     *
-     * @param checkinid   {@link UUID} of checkin
-     * @param createdbyid {@link UUID} of member
-     * @return {@link List < CheckIn > list of checkins}
-     */
-    @Get("/{?checkinid,createdbyid}")
-    public Set<AgendaItem> findAgendaItems(@Nullable UUID checkinid,
-                                           @Nullable UUID createdbyid) {
-        return agendaItemServices.findByFields(checkinid, createdbyid);
-    }
+    // /**
+    //  * Find agenda items that match all filled in parameters, return all results when given no params
+    //  *
+    //  * @param checkinid   {@link UUID} of checkin
+    //  * @param createdbyid {@link UUID} of member
+    //  * @return {@link List < CheckIn > list of checkins}
+    //  */
+    // @Get("/{?checkinid,createdbyid}")
+    // public Set<AgendaItem> findAgendaItems(@Nullable UUID checkinid,
+    //                                        @Nullable UUID createdbyid) {
+    //     return agendaItemServices.findByFields(checkinid, createdbyid);
+    // }
 
 
 	// // /**	
