@@ -84,7 +84,6 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         final UUID id = agendaItem.getId();
         final UUID createById = agendaItem.getCreatedbyid();
         final UUID checkinId = agendaItem.getCheckinid();
-        // LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -101,8 +100,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         } else if(!isAdmin) {
             if(!currentUser.getId().equals(agendaItem.getCreatedbyid())) {
                 throw new AgendaItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-            // } else if(checkinRepo.findById(id).get().isCompleted()) {
-            //     throw new AgendaItemBadArgException(String.format("Checkin with id %s is complete and cannot be updated", agendaItem.getId()));
+            } else if(checkinRepo.findById(id).get().isCompleted()) {
+                throw new AgendaItemBadArgException(String.format("Checkin with id %s is complete and cannot be updated", agendaItem.getId()));
             }
         }
 
@@ -124,8 +123,6 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
                 agendaItems.retainAll(agendaItemRepo.findByCheckinid(checkinid));
             } else if (checkinid != null) {
                 agendaItems.retainAll(agendaItemRepo.findByCreatedbyid(createdbyid));
-            // } else if (completed != null) {
-            //     agendaItems.retainAll(checkinRepo.findByCompleted(completed));
             }
             return agendaItems;
         }
