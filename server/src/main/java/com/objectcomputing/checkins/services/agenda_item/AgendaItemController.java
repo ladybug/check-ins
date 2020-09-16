@@ -53,7 +53,6 @@ public class AgendaItemController {
      * @return
      */
     @Post("/")
-    @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
     public HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem, HttpRequest<AgendaItemCreateDTO> request) {
         AgendaItem newAgendaItem = agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid()
                 , agendaItem.getDescription()));
@@ -70,7 +69,6 @@ public class AgendaItemController {
      * @return
      */
     @Put("/")
-    @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
     public HttpResponse<AgendaItem> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItemCreateDTO> request) {
         AgendaItem updateAgendaItem = agendaItemServices.update(agendaItem);
         return HttpResponse.ok().headers(headers -> headers.location(
