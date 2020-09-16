@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public interface AgendaItemServices {
 
-    AgendaItem save(AgendaItem agendaItem);
+    AgendaItem save(AgendaItem checkinNote);
 
     AgendaItem read(UUID id);
 
-    AgendaItem update(AgendaItem agendaItem);
+    AgendaItem update(AgendaItem checkinNote);
 
     Set<AgendaItem> findByFields(UUID checkinid, UUID createdbyid);
 
