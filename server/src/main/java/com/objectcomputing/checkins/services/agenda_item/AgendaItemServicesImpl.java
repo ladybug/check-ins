@@ -1,20 +1,16 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.checkins.CheckInBadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.utils.SecurityService;
-import jnr.a64asm.Mem;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -142,7 +138,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
                 if(!currentUser.getId().equals(pdlId)&&!currentUser.getId().equals(teamMemberId)&&!isAdmin){
                     throw new AgendaItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
                 } else {
-                    agendaItem.retainAll(agendaItemRepository.findByCheckinid(checkinid));
+                    agendaItem.retainAll(this.findByFields(checkinid, null));
                 }
             } else if(createbyid!=null) {
                 MemberProfile memberRecord = memberRepo.findById(createbyid).orElse(null);
@@ -150,7 +146,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
                 if(!currentUser.getId().equals(memberRecord.getId())&&!isAdmin){
                     throw new AgendaItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
                 } else {
-                    agendaItem.retainAll(agendaItemRepository.findByCreatedbyid(createbyid));
+                    agendaItem.retainAll(this.findByFields(null, createbyid));
                 }
             } else if(!isAdmin) {
                 throw new AgendaItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
@@ -178,3 +174,4 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         agendaItemRepository.deleteById(id);
     }
 }
+
