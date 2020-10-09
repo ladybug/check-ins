@@ -22,22 +22,22 @@ const CheckinsHistory = ({ history }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (checkins.length) {
-      const { pathname } = history.location;
-      const [, , checkinid] = pathname.split("/");
-      const i = checkinid
-        ? checkins.findIndex((checkin) => checkin.id === checkinid)
-        : checkins.length - 1;
-      setIndex(i);
-      const checkin = checkins[index];
+    const length = checkins ? checkins.length : 0;
+    setIndex(length - 1);
+  }, [checkins]);
+
+  useEffect(() => {
+    const checkin = checkins[index];
+    if (checkin) {
       dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
       history.push(`/checkins/${checkin.id}`);
     }
-  }, [checkins, index, dispatch, history]);
+  }, [index, dispatch, history, checkins]);
 
   const getCheckinDate = () => {
     if (currentCheckin && currentCheckin.checkInDate) {
-      return new Date(currentCheckin.checkInDate);
+      const [year, month, day, hour, minute] = currentCheckin.checkInDate;
+      return new Date(year, month - 1, day, hour, minute, 0);
     }
     // return new date unless you are running a Jest test
     return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
@@ -50,13 +50,17 @@ const CheckinsHistory = ({ history }) => {
 
   const previousCheckin = () => {
     if (index !== 0) {
-      setIndex((index) => index - 1);
+      const i = index - 1;
+      setIndex(i);
+      history.push(`/checkins/${checkins[i].id}`);
     }
   };
 
   const nextCheckin = () => {
     if (index !== lastIndex) {
-      setIndex((index) => index + 1);
+      const i = index + 1;
+      setIndex(i);
+      history.push(`/checkins/${checkins[i].id}`);
     }
   };
 
@@ -64,8 +68,10 @@ const CheckinsHistory = ({ history }) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
     const checkin = checkins[index];
-    const dateArray = [year, month, day];
+    const dateArray = [year, month, day, hours, minutes, 0];
     const updatedCheckin = await updateCheckin({
       ...checkin,
       checkInDate: dateArray,
@@ -88,7 +94,7 @@ const CheckinsHistory = ({ history }) => {
   const DateInput = React.forwardRef((props, ref) => (
     <div className="date-input" ref={ref}>
       <p style={{ margin: "0px" }}>{props.value}</p>
-      <CalendarTodayIcon onClick={props.onClick}>stuff</CalendarTodayIcon>
+      <CalendarTodayIcon onClick={props.onClick}></CalendarTodayIcon>
     </div>
   ));
 
@@ -110,6 +116,10 @@ const CheckinsHistory = ({ history }) => {
             closeOnScroll
             customInput={<DateInput />}
             dateFormat="MMMM dd, yyyy h:mm aa"
+            disabled={
+              !checkins.length ||
+              (currentCheckin && currentCheckin.completed === true)
+            }
             onChange={pickDate}
             selected={getCheckinDate()}
             showTimeSelect

@@ -32,9 +32,10 @@ public class MemberProfile {
     @Schema(description = "full name of the employee", required = true)
     private String name;
 
-    @Column(name="role")
-    @Schema(description = "employee's role at the company", required = true)
-    private String role ;
+    @Column(name="title")
+    @Nullable
+    @Schema(description = "employee's title at the company")
+    private String title ;
     
     @Column(name="pdlId")
     @TypeDef(type=DataType.STRING)
@@ -43,7 +44,8 @@ public class MemberProfile {
     private UUID pdlId;
 
     @Column(name="location")
-    @Schema(description = "where the employee is geographically located", required = true)
+    @Nullable
+    @Schema(description = "where the employee is geographically located")
     private String location;
 
     @NotNull
@@ -52,6 +54,7 @@ public class MemberProfile {
     private String workEmail;
 
     @Column(name="insperityId")
+    @Nullable
     @Schema(description = "unique identifier for this employee with the Insperity system")
     private String insperityId; 
 
@@ -61,21 +64,22 @@ public class MemberProfile {
     private LocalDate startDate;
 
     @Column(name="bioText")
+    @Nullable
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
-                         String workEmail, String insperityId, @Nullable LocalDate startDate,
-                         String bioText) {
-       this(null, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+    public MemberProfile(String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                         @Nullable String bioText) {
+       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfile(UUID id, String name, String role, @Nullable UUID pdlId, String location,
-                         String workEmail, String insperityId, @Nullable LocalDate startDate,
-                         String bioText) {
+    public MemberProfile(UUID id, String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                         @Nullable String bioText) {
         this.id = id;
         this.name=name;
-        this.role=role;
+        this.title=title;
         this.pdlId=pdlId;
         this.location=location;
         this.workEmail=workEmail;
@@ -103,12 +107,12 @@ public class MemberProfile {
         this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public UUID getPdlId() {
@@ -166,7 +170,7 @@ public class MemberProfile {
         MemberProfile that = (MemberProfile) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(role, that.role) &&
+                Objects.equals(title, that.title) &&
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(workEmail, that.workEmail) &&
@@ -177,7 +181,7 @@ public class MemberProfile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+        return Objects.hash(id, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
     @Override
@@ -185,7 +189,7 @@ public class MemberProfile {
         return "MemberProfile{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", role='" + role + '\'' +
+                ", title='" + title + '\'' +
                 ", pdlId=" + pdlId +
                 ", location='" + location + '\'' +
                 ", workEmail='" + workEmail + '\'' +
