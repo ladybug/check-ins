@@ -4,7 +4,7 @@ import Avatar from "@material-ui/core/Avatar";
 
 import "./Checkin.css";
 
-const CheckinProfile = ({ state }) => {
+const CheckinProfile = ({ state = {}}) => {
   const { userProfile } = state;
   const { workEmail, role, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
