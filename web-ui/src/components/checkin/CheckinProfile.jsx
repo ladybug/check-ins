@@ -3,6 +3,7 @@ import { getMember } from "../../api/member";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./Checkin.css";
+const displayName = "CheckinProfile";
 
 const CheckinProfile = ({ state = {}}) => {
   const { userProfile } = state;
@@ -42,4 +43,5 @@ const CheckinProfile = ({ state = {}}) => {
   );
 };
 
+CheckinProfile.displayName = displayName;
 export default CheckinProfile;
