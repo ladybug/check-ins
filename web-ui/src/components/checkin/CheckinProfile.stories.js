@@ -1,13 +1,31 @@
 import React from 'react';
 import CheckinProfile from './CheckinProfile';
+import {AppContextProvider} from '../../context/AppContext';
 
 export default {
     title: 'Check-Ins/CheckinProfile',
     component: CheckinProfile
 };
 
+const initialState = {
+    state: {
+      selectedProfile: {},
+      userProfile: {
+        name: "Senior Test",
+        memberProfile: {
+          pdlId: "",
+          title: "Tester",
+          workEmail: "test@tester.com",
+        },
+        role: ["MEMBER"],
+      },
+    },
+  };
+
 const Template = (args) =>
-    <CheckinProfile {...args} />;
+    <AppContextProvider value = {initialState}>
+        <CheckinProfile {...args} />
+    </AppContextProvider>;
 
 export const Profile = Template.bind({});
 Profile.args = {
@@ -27,5 +45,4 @@ Profile.args = {
 export const NoProfile = Template.bind({});
 NoProfile.args = {
 
-}
-
+};
