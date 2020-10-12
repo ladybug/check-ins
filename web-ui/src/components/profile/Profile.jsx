@@ -21,7 +21,7 @@ const Profile = () => {
   const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
-  const { bioText, workEmail, name, role, id, pdlId } =
+  const { bioText, workEmail, name, title, id, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
 
   const [pdl, setPDL] = useState();
@@ -147,7 +147,7 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <div className="Profile">
       <div className="flex-row" style={{ marginTop: "20px" }}>
         <div className="profile-image">
           <Avatar
@@ -190,8 +190,8 @@ const Profile = () => {
               )}
             </h2>
             <div>
-              <span>Role: </span>
-              {role}
+              <span>Job Title: </span>
+              {title}
             </div>
             <div>
               <span>Email: </span>
