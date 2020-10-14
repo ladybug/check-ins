@@ -34,7 +34,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testCreateATeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
@@ -91,7 +91,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithNonExistingTeam() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
@@ -114,7 +114,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithNonExistingMember() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
@@ -137,7 +137,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithExistingMemberAndTeam() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -162,7 +162,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testLoadTeamMembers() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
@@ -171,7 +171,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         teamMemberCreateDTO.setLead(true);
 
         MemberProfile memberProfile1 = createADefaultMemberProfileForPdl(memberProfile);
-        Team team1 = createAnotherDeafultTeam();
+        Team team1 = createAnotherDefultTeam();
         TeamMemberCreateDTO teamMemberCreateDTO2 = new TeamMemberCreateDTO();
         teamMemberCreateDTO2.setTeamid(team1.getId());
         teamMemberCreateDTO2.setMemberid(memberProfile1.getId());
@@ -190,7 +190,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testLoadTeamMembersInvalidTeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
@@ -219,7 +219,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testLoadTeamMembersThrowException() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
@@ -248,7 +248,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testReadTeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -270,7 +270,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindAllTeamMembers() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -285,7 +285,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindByTeamId() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -300,7 +300,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindByMemberId() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -314,7 +314,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindTeamMembers() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -329,7 +329,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindTeamMembersAllParams() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -345,7 +345,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -360,7 +360,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateAnInvalidTeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -399,7 +399,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowException() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -422,7 +422,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowExceptionWithNoTeam() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
@@ -445,7 +445,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowExceptionWithInvalidId() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);

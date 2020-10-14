@@ -14,6 +14,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     const teamMemberOptions = memberProfiles;
 
     const onLeadsChange = (event, newValue) => {
+        newValue.lead = true;
         setTeam({
             ...editedTeam,
             teamLeads: newValue
@@ -21,6 +22,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     };
 
     const onTeamMembersChange = (event, newValue) => {
+        newValue.lead = false;
         setTeam({
             ...editedTeam,
             teamMembers: newValue

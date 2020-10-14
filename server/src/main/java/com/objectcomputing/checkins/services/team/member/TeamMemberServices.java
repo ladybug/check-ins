@@ -12,4 +12,6 @@ public interface TeamMemberServices {
     TeamMember update(TeamMember teamMember);
 
     Set<TeamMember> findByFields(UUID teamid, UUID memberid, Boolean lead);
+
+    void clearTeam(UUID teamid);
 }

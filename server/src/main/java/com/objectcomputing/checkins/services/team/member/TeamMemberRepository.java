@@ -28,4 +28,5 @@ public interface TeamMemberRepository extends CrudRepository<TeamMember, UUID> {
     @Override
     <S extends TeamMember> S save(@Valid @NotNull @NonNull S entity);
 
+    void deleteByTeamid(UUID teamid);
 }

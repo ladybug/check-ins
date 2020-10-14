@@ -52,3 +52,62 @@ export const getAllTeams = async () => {
     })
   )
 };
+
+export const getTeam = async (id) => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${teamUrl}/${id}`,
+      responseType: "json",
+      withCredentials: true
+    })
+  )
+};
+
+export const createTeam = async(team) => {
+    return await resolve(
+        axios({
+            method: "post",
+            url: teamUrl,
+            responseType: "json",
+            data: team,
+            withCredentials: true,
+        })
+    );
+};
+
+export const updateTeam = async(team) => {
+    return await resolve(
+        axios({
+            method: "put",
+            url: teamUrl,
+            responseType: "json",
+            data: team,
+            withCredentials: true,
+        })
+    );
+};
+
+export const addTeamMember = async(teamMember) => {
+    return await resolve(
+        axios({
+            method: "post",
+            url: teamMemberUrl,
+            responseType: "json",
+            data: teamMember,
+            withCredentials: true,
+        })
+    );
+};
+
+export const updateTeamMember = async(teamMember) => {
+    return await resolve(
+        axios({
+            method: "put",
+            url: teamMemberUrl,
+            responseType: "json",
+            data: teamMember,
+            withCredentials: true,
+        })
+    );
+};

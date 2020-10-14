@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.services.team.member.TeamMember;
+import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -12,7 +14,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -27,8 +28,14 @@ import java.util.UUID;
 @Tag(name = "team")
 public class TeamController {
 
-    @Inject
-    private TeamServices teamService;
+    private final TeamServices teamService;
+    private final TeamMemberServices teamMemberServices;
+
+    public TeamController(TeamServices teamService,
+                          TeamMemberServices teamMemberServices) {
+        this.teamService = teamService;
+        this.teamMemberServices = teamMemberServices;
+    }
 
     @Error(exception = TeamBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
@@ -116,12 +123,23 @@ public class TeamController {
      * @return {@link HttpResponse<Team>}
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid Team team, HttpRequest<Team> request) {
-        Team updatedTeam = teamService.update(team);
+    public HttpResponse<?> update(@Body @Valid TeamUpdateDTO team, HttpRequest<Team> request) {
+        Team updatedTeam = teamService.update(toTeamEntityFromUpdateDTO(team));
+        teamMemberServices.clearTeam(team.getId());
+        for (TeamMember member : team.getTeamMembers()) {
+            member.setTeamid(team.getId());
+            member.setId(null);
+            teamMemberServices.save(member);
+        }
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))))
                 .body(updatedTeam);
 
     }
+
+    private Team toTeamEntityFromUpdateDTO(TeamUpdateDTO dto) {
+        return new Team(dto.getId(), dto.getName(), dto.getDescription());
+    }
+
 }

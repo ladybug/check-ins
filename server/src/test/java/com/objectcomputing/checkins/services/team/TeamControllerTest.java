@@ -87,7 +87,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testCreateATeamWithExistingName() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
 
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
         teamCreateDTO.setDescription("test");
@@ -182,7 +182,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testReadTeam() {
-        Team team = createDeafultTeam() ;
+        Team team = createDefultTeam() ;
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", team.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
@@ -203,7 +203,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testFindAllTeams() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
@@ -218,7 +218,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testFindByName() {
 
-        Team team = createDeafultTeam() ;
+        Team team = createDefultTeam() ;
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", team.getName())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
@@ -231,7 +231,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testFindByMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
 
@@ -246,7 +246,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testFindTeams() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
 
@@ -261,19 +261,26 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testUpdateTeam() {
-        Team team = createDeafultTeam();
+        MemberProfile profile1 = createADefaultMemberProfile();
+        MemberProfile profile2 = createADefaultMemberProfileForPdl(profile1);
+        MemberProfile profile3 = createAnUnrelatedUser();
 
-        final HttpRequest<Team> request = HttpRequest.PUT("/", team).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        Team savedTeam = createDefultTeam();
+
+        TeamUpdateDTO team = makeDefaultTeamUpdateDTO(savedTeam.getId(), List.of(profile1, profile2, profile3));
+
+        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", team).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
-        assertEquals(team, response.body());
+        assertEquals(team.getName(), response.body().getName());
+        assertEquals(team.getDescription(), response.body().getDescription());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), team.getId()), response.getHeaders().get("location"));
     }
 
     @Test
     void testUpdateAnInvalidTeam() {
-        Team team = createDeafultTeam();
+        Team team = createDefultTeam();
         team.setName(null);
         team.setDescription(null);
 
@@ -286,8 +293,8 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        assertEquals("team.description: must not be blank", errorList.get(0));
-        assertEquals("team.name: must not be blank", errorList.get(1));
+        assertEquals("team.name: must not be blank", errorList.get(0));
+        assertEquals("team.teamMembers: must not be empty", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
@@ -311,10 +318,13 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testUpdateTeamThrowException() {
-        Team team = createDeafultTeam();
-        team.setId(UUID.randomUUID());
+        MemberProfile profile1 = createADefaultMemberProfile();
+        MemberProfile profile2 = createADefaultMemberProfileForPdl(profile1);
+        MemberProfile profile3 = createAnUnrelatedUser();
 
-        final MutableHttpRequest<Team> request = HttpRequest.PUT("", team).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        TeamUpdateDTO team = makeDefaultTeamUpdateDTO(UUID.randomUUID(), List.of(profile1, profile2, profile3));
+
+        final MutableHttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", team).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 

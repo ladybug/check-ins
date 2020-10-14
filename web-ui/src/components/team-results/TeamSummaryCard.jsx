@@ -1,8 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { AppContext } from '../../context/AppContext';
+import EditTeamModal from './EditTeamModal';
+import { updateTeam,} from '../../api/team';
 
 const propTypes = {
     team: PropTypes.shape({
@@ -15,11 +17,62 @@ const propTypes = {
 const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({ team }) => {
+
     const {state} = useContext(AppContext);
-    const teamMembers = AppContext.selectMemberProfilesByTeamId(state)(team.id);
+
+    const { userProfile } = state;
+
+    let teamMembers = AppContext.selectMemberProfilesByTeamId(state)(team.id);
+
 
     let leads = teamMembers == null ? null : teamMembers.filter((teamMember) => teamMember.lead);
     let nonLeads = teamMembers == null ? null : teamMembers.filter((teamMember) => !teamMember.lead);
+
+    team.teamLeads = leads;
+    team.teamMembers = nonLeads;
+
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => setOpen(true);
+
+    const formatMember = (member, isLead) => {
+        if (!member.memberid) {
+            member.memberid = member.id;
+        }
+        member.lead = isLead;
+        return member;
+    };
+
+    const handleClose = (alteredTeam) => {
+        setOpen(false);
+        let postBody = {
+            name: alteredTeam.name,
+            description: alteredTeam.description,
+            teamMembers: [...alteredTeam.teamMembers.map((member) => formatMember(member, false)),
+                ...alteredTeam.teamLeads.map((lead) => formatMember(lead, true))],
+            id: alteredTeam.id,
+        }
+        alteredTeam.teamMembers = [...alteredTeam.teamMembers, ...alteredTeam.teamLeads];
+        updateTeam(postBody);
+        team = alteredTeam;
+        teamMembers = AppContext.selectMemberProfilesByTeamId(state)(team.id);
+        leads = teamMembers == null ? null : teamMembers.filter((teamMember) => teamMember.lead);
+        nonLeads = teamMembers == null ? null : teamMembers.filter((teamMember) => !teamMember.lead);
+        team.teamLeads = leads;
+        team.teamMembers = nonLeads;
+
+    };
+
+    const userCanEdit = () => {
+        const leads = teamMembers.filter((teamMember) => teamMember.lead);
+        const thisUserLead = leads.filter((lead) => lead.memberid === userProfile.memberProfile.id);
+        const isLead = thisUserLead.length > 0;
+        if (userProfile.role.includes("ADMIN") || isLead) {
+            return true;
+        }
+
+        return false;
+    };
 
     return (
         <Card>
@@ -48,10 +101,11 @@ const TeamSummaryCard = ({ team }) => {
                         </React.Fragment>
                 }
             </CardContent>
-            <CardActions>
-                <Button>Edit Team</Button>
+            <CardActions style={{display: userCanEdit() ? "block" : "none" }}>
+                <Button onClick={handleOpen}>Edit Team</Button>
                 <Button>Delete Team</Button>
             </CardActions>
+            <EditTeamModal team={team} open={open} onClose={handleClose} onSave={(alteredTeam) => { handleClose(alteredTeam); }} />
         </Card>
     );
 };
