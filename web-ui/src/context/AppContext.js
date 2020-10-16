@@ -9,6 +9,7 @@ export const UPDATE_CHECKINS = "@@check-ins/update_checkins";
 export const UPDATE_INDEX = "@@check-ins/update_index";
 export const UPDATE_TOAST = "@@check-ins/update_toast";
 export const UPDATE_CURRENT_CHECKIN = "@@check-ins/update_current_checkin";
+export const UPDATE_TEAM = "@@check-ins/update_team";
 export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
